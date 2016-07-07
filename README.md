@@ -1,20 +1,30 @@
 # instadl (instagram downloader)
-Instagram downloader for linux based OSs.
+Instagram downloader bash script.
 
 
-Installation:
+# Installation:
 
-$ sudo wget https://raw.githubusercontent.com/HamedSepehr/instadl/master/instadl -O /usr/bin/instadl
+```
+# wget https://raw.githubusercontent.com/mashhadlug/instadl/master/instadl -O /usr/local/bin/instadl
+# chmod +x /usr/local/bin/instadl
+```
+Hint: you need root permissions (`sudo` may do well).
 
-$ sudo chmod +x /usr/bin/instadl
+# Usage:
 
+```
+Usage: instadl [-h] [Instagram Share URL]
+Example: instadl https://instagram.com/p/9aagaUKT7-/
 
-Usage:
+Try ‘instadl -h’ for help.
+```
 
-$ instadl instagram_share_url
+# Author
+- hamedsepehry[at]yahoo[dot]com
 
-Example:
+# CHANGELOG
 
-$ instadl https://instagram.com/p/9aagaUKT7-/
-
-Contact: hamedsepehry[at]yahoo[dot]com
+- version 0.1.1
+ - added proper exit statuses.
+ - used better outputs.
+ - added network timeout checks.
