@@ -16,3 +16,5 @@ $ instadl instagram_share_url
 Example:
 
 $ instadl https://instagram.com/p/9aagaUKT7-/
+
+Contact: hamedsepehry[at]yahoo[dot]com
