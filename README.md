@@ -13,8 +13,9 @@ Hint: you need root permissions (`sudo` may do well).
 # Usage:
 
 ```
-Usage: instadl [-h] [Instagram Share URL]
+Usage: instadl [-h] [Instagram Share URL] [-u UserName]
 Example: instadl https://instagram.com/p/9aagaUKT7-/
+Example: instadl -u UserName
 
 Try ‘instadl -h’ for help.
 ```
@@ -23,6 +24,9 @@ Try ‘instadl -h’ for help.
 - hamedsepehry[at]yahoo[dot]com
 
 # CHANGELOG
+- version 0.1.2
+ - added get all media by username.
+ - used better outputs (colorify).
 
 - version 0.1.1
  - added proper exit statuses.
