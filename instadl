@@ -3,30 +3,92 @@
 #There is no license
 #Contact: hamedsepehry[at]yahoo[dot]com
 
+source print_data
+
+version="0.1.1"
+network_timeout=15
 instalink=$1
-if [ "$instalink" = "" ] #if there was no link
+username=$2
+instapattern="https?://(www\.)?instagram\.com/.*"
+
+function show_help {
+    show_msg "Instagram Downloader $version, instagram share url downloader."
+}
+
+function show_error {
+    show_err "instadl: $1" >&2
+}
+
+function show_usage {
+    show_msg "Usage: instadl [-h] [Instagram Share URL]"
+    show_msg "Example: instadl https://instagram.com/p/9aagaUKT7-/"
+    show_msg "Example: instadl -u username"
+    show_msg ""
+    show_msg "Try ‘instadl -h’ for help."
+}
+
+function download_all {
+    show_msg "Fetch User data for $username"
+    show_msg "Save data in ${username} directoty"
+    if [[ -d "${username}" ]]
+    then
+        show_war "${username} exists, crawling."
+    else
+        mkdir "${username}"
+    fi
+    cd ${username}
+    mapfile -t links < <(wget -T $network_timeout --quiet -O - "https://www.instagram.com/${username}/media" | sed -e 's/standard/\n/g' | sed -e 's/_resolution": {"url": "//g'| grep -v status | sed -e 's/".*//g' -e 's/\\//g')
+    maxid=$(wget -T $network_timeout --quiet -O - "https://www.instagram.com/${username}/media" | sed -e 's/standard/\n/g' | grep -e "\"image\", \"id\"" | sed -e 's/.*\"image\", \"id\"\: \"//g' -e 's/\".*//g' | tail -n 1)
+    for i in "${links[@]}"
+    do
+        wget -T $network_timeout  -nc "${i%%\?*}" > /dev/null 2>&1
+        show_ok "✔ \033[0m$i"
+    done
+    until [[ "$maxid" == "" ]]
+    do
+        mapfile -t links < <(wget -T $network_timeout --quiet -O - "https://www.instagram.com/${username}/media/?max_id=${maxid}" | sed -e 's/standard/\n/g' | sed -e 's/_resolution": {"url": "//g'| grep -v status | sed -e 's/".*//g' -e 's/\\//g')
+        maxid=$(wget -T $network_timeout --quiet -O - "https://www.instagram.com/${username}/media/?max_id=${maxid}" | sed -e 's/standard/\n/g' | grep -e "\"image\", \"id\"" | sed -e 's/.*\"image\", \"id\"\: \"//g' -e 's/\".*//g' | tail -n 1)
+        for i in "${links[@]}"
+        do
+            wget -T $network_timeout -nc "${i%%\?*}" > /dev/null 2>&1
+            show_ok "✔ \033[0m$i"
+        done
+        sleep 1
+    done
+    cd ..
+}
+
+if [ "$instalink" == "" ] | [ "$instalink" == "-h" ] #if there was no link
 then
-	echo 'Instagram Downloader with no option! :D It can download both pictures and videos, just give it the share url!'
-	echo "This is how you can use this downloader:"
-	echo "instadl instagram_share_url"
-	echo "Example:"
-	echo "instadl https://instagram.com/p/9aagaUKT7-/"
-	echo "Wanna talk to me? I am here hamedsepehry[at]yahoo[dot]com"
-	exit
-elif [ "$(echo $instalink | cut -c1-22)" != "https://instagram.com/" ] && [ "$(echo $instalink | cut -c1-26)" != "https://www.instagram.com/" ] #if the link was wrong
+    show_help
+    show_usage
+	exit 1
+elif [[ "$instalink" == "-u" ]]
 then
-	echo "Pleas use a link which starts with https://instagram.com/"
-	echo "Example:"
-	echo "instadl https://instagram.com/p/9aagaUKT7-/"
-	exit
+    download_all
+elif [[ ! $instalink =~ $instapattern ]] #if the link was wrong
+then
+    show_error "invalid instagram share url."
+    show_usage >&2
+	exit 2
 else
 	IFS=''
-	pagesource=$(wget -O - $instalink) #get source of the page
+    pagesource=$(wget -T $network_timeout -qO - $instalink) #get source of the page
+    if [ "$?" != "0" ]
+    then
+        show_error "failed to fetch ‘$instalink’"
+        exit 3
+    fi
 	if [ "$(echo $pagesource | egrep mp4)" = "" ] #check if there is a pic or vid to download
-	then #get pic download link
+	then #get img download link
 		dllink="$(echo $pagesource | egrep jpg | head -1 | egrep -o "http.+jpg")"
 	else #get vid download link
 		dllink="$(echo $pagesource | egrep mp4 | head -1 | egrep -o "http.+mp4")"
 	fi
-	wget -c "$dllink" #download file via wget, u can change it if u want and replace with other download apps like axel or aria2c
+	wget -T $network_timeout -qc "$dllink" #download file via wget, u can change it if u want and replace with other download apps like axel or aria2c
+    if [ "$?" != "0" ]
+    then
+        show_error "failed to download ‘$dllink’"
+        exit 4
+    fi
 fi
