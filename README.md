@@ -1,4 +1,4 @@
-# instadl (instagram downloader)
+# insta-dl (instagram downloader)
 Instagram downloader written in bash script.
 
 
