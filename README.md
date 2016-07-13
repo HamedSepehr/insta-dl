@@ -5,7 +5,7 @@ Instagram downloader written in bash script.
 #Installation:
 ```
 $ sudo wget https://raw.githubusercontent.com/HamedSepehr/instadl/master/insta-dl -O /usr/local/bin/insta-dl
-$ sudo chmod +x /usr/bin/instadl
+$ sudo chmod +x /usr/local/bin/insta-dl
 ```
 
 
