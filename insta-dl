@@ -8,16 +8,16 @@ if [ "$instalink" = "" ] #if there was no link
 then
 	echo 'Instagram Downloader with no option! :D It can download both pictures and videos, just give it the share url!'
 	echo "This is how you can use this downloader:"
-	echo "instadl instagram_share_url"
+	echo "insta-dl instagram_share_url"
 	echo "Example:"
-	echo "instadl https://instagram.com/p/9aagaUKT7-/"
+	echo "insta-dl https://instagram.com/p/9aagaUKT7-/"
 	echo "Wanna talk to me? I am here hamedsepehry[at]yahoo[dot]com"
 	exit
 elif [ "$(echo $instalink | cut -c1-22)" != "https://instagram.com/" ] && [ "$(echo $instalink | cut -c1-26)" != "https://www.instagram.com/" ] #if the link was wrong
 then
 	echo "Pleas use a link which starts with https://instagram.com/"
 	echo "Example:"
-	echo "instadl https://instagram.com/p/9aagaUKT7-/"
+	echo "insta-dl https://instagram.com/p/9aagaUKT7-/"
 	exit
 else
 	IFS=''
