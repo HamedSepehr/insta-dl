@@ -9,7 +9,7 @@ $ sudo chmod +x /usr/bin/instadl
 ```
 
 
-Usage:
+#Usage:
 ```
 $ instadl instagram_share_url
 $ instadl https://instagram.com/p/9aagaUKT7-/
