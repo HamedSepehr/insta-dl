@@ -8,25 +8,36 @@ if [ "$instalink" = "" ] #if there was no link
 then
 	echo 'Instagram Downloader with no option! :D It can download both pictures and videos, just give it the share url!'
 	echo "This is how you can use this downloader:"
-	echo "insta-dl instagram_share_url"
+	echo "instadl instagram_share_url"
 	echo "Example:"
-	echo "insta-dl https://instagram.com/p/9aagaUKT7-/"
+	echo "instadl https://instagram.com/p/9aagaUKT7-/"
 	echo "Wanna talk to me? I am here hamedsepehry[at]yahoo[dot]com"
 	exit
 elif [ "$(echo $instalink | cut -c1-22)" != "https://instagram.com/" ] && [ "$(echo $instalink | cut -c1-26)" != "https://www.instagram.com/" ] #if the link was wrong
 then
 	echo "Pleas use a link which starts with https://instagram.com/"
 	echo "Example:"
-	echo "insta-dl https://instagram.com/p/9aagaUKT7-/"
+	echo "instadl https://instagram.com/p/9aagaUKT7-/"
 	exit
 else
 	IFS=''
-	pagesource=$(wget -O - $instalink) #get source of the page
-	if [ "$(echo $pagesource | egrep mp4)" = "" ] #check if there is a pic or vid to download
-	then #get pic download link
-		dllink="$(echo $pagesource | egrep jpg | head -1 | egrep -o "http.+jpg")"
-	else #get vid download link
-		dllink="$(echo $pagesource | egrep mp4 | head -1 | egrep -o "http.+mp4")"
+	echo "Downloading web page..."
+	pagesource=$(wget -O - $instalink -q) #get source of the page
+	if [ $? -eq 0 ]
+	then
+		if [ "$(echo $pagesource | egrep jpg)" != "" ] #check if there is a pic or vid to download
+		then #get pic download link
+			echo "Image found"
+			dllink="$(echo $pagesource | egrep jpg | head -1 | egrep -o "http.+jpg")"
+		elif [ "$(echo $pagesource | egrep mp4)" != "" ] #get vid download link
+		then
+			echo "Video found"
+			dllink="$(echo $pagesource | egrep mp4 | head -1 | egrep -o "http.+mp4")"
+		else
+			echo "Nothing found to download, wrong URL or private account."
+		fi
+		wget "$dllink" -q -c --show-progress #download file via wget, u can change it if u want and replace with other download apps like axel or aria2c
+	else
+		echo "Can not access the URL, please check your internt connection."
 	fi
-	wget -c "$dllink" #download file via wget, u can change it if u want and replace with other download apps like axel or aria2c
 fi
